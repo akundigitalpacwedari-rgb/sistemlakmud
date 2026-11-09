@@ -162,7 +162,7 @@ tailwind.config = { theme: { extend: {
   @media (min-width: 1024px) { body:has(#app:not(.hide)) #tulisan-utama-lakmud { padding-left: 17rem; } }
   @media print { #tulisan-utama-lakmud { display: none; } }
 </style>
-<h1 id="tulisan-utama-lakmud" contenteditable="true">Selamat Datang di Sistem Lakmud</h1>
+<h1 id="text-lakmud-live" contenteditable="true">Selamat Datang di Sistem Lakmud</h1>
 
 <div id="login" class="hide min-h-screen"></div>
 
@@ -2642,5 +2642,36 @@ try {
   }
 } catch (e) { console.error('Sinkronisasi judul tidak aktif:', e); }
 </script>
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+
+    <script>
+        // Menggunakan server database baru dan independen untuk IPNU IPPNU Wedarijaksa
+        const firebaseConfig = {
+            databaseURL: "https://firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Mengunci elemen tulisan di web Anda
+        const targetLiveElement = document.getElementById('text-lakmud-live');
+
+        if (targetLiveElement) {
+            // 1. MENDENGAR PERUBAHAN DI LATAR BELAKANG
+            database.ref('pac_wedarijaksa_live_system').on('value', (snapshot) => {
+                const teksTerbaru = snapshot.val();
+                // Mengubah isi layar tanpa mengganggu kursor ketikan Anda sendiri
+                if (teksTerbaru && document.activeElement !== targetLiveElement) {
+                    targetLiveElement.innerText = teksTerbaru;
+                }
+            });
+
+            // 2. MENGIRIM DATA INSTAN SAAT ANDA MENGETIK
+            targetLiveElement.addEventListener('input', () => {
+                const teksSaatIni = targetLiveElement.innerText;
+                database.ref('pac_wedarijaksa_live_system').set(teksSaatIni);
+            });
+        }
+    </script>
 </body>
 </html>
